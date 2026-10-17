@@ -53,18 +53,6 @@ pytest -q
 
 The dashboard covers overview, inventory movements and adjustments, orders, forecasting/replenishment approval, and a grounded read-only operations copilot. The worker can be started with `PYTHONPATH=apps/api python -m apps.worker.worker` to release expired reservations and process outbox rows.
 
-See [`docs/demo.md`](docs/demo.md) for a repeatable walkthrough and [`docs/architecture.md`](docs/architecture.md) for the system design and consistency boundaries.
-
-## Resume framing
-
-**FulfillOS — Quick-commerce fulfilment and inventory intelligence platform**
-
-- Built transaction-safe order allocation and inventory reservation with idempotency keys, signed movement ledger entries, cancellation release, and stock-risk alerts.
-- Implemented explainable demand forecasting, de-duplicated replenishment recommendations, and receipt workflows that update inventory and emit outbox events.
-- Delivered a React operations dashboard for store inventory, order failures, replenishment decisions, and grounded read-only copilot investigations.
-
-Only add latency, throughput, or accuracy numbers after measuring them with a repeatable benchmark.
-
 ## Docker services
 
 `docker compose up --build` starts PostgreSQL/pgvector, Redis, Ollama, API, worker, and web. The core demo does not require Ollama; the copilot uses deterministic database tools locally and remains available when the model service is absent.
