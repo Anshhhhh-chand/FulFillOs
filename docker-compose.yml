@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: fulfillos
+      POSTGRES_USER: fulfillos
+      POSTGRES_PASSWORD: fulfillos
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+  api:
+    build: ./apps/api
+    environment:
+      DATABASE_URL: postgresql+psycopg://fulfillos:fulfillos@postgres:5432/fulfillos
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    command: python -m worker.worker
+    environment:
+      DATABASE_URL: postgresql+psycopg://fulfillos:fulfillos@postgres:5432/fulfillos
+    depends_on:
+      - postgres
+  web:
+    build: ./apps/web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+volumes:
+  postgres_data:
+  ollama_data:
